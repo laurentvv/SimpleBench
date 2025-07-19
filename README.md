@@ -36,7 +36,7 @@ MODEL_MAP = {
     "gemma": "gemma",
     "phi3": "phi3",
     "qwen2": "qwen2",
-    "qwen2:14b": "qwen2:14b",
+    "qwen3:14b-q4_K_M": "qwen3:14b-q4_K_M",
     "command-r": "command-r",
     "command-r-plus": "command-r-plus",
     "my-new-model": "my-new-model",
@@ -47,17 +47,12 @@ MODEL_MAP = {
 
 Clonez le dépôt github et placez-vous dedans.
 
-Assurez-vous d'avoir la bonne version de python (3.10.11) en tant que venv :
-```
-pyenv local 3.10.11
-python -m venv llm_env
-source llm_env/bin/activate
-```
-
 Installez les dépendances:
 
 La meilleure façon d'installer les dépendances est d'utiliser `uv`. Si vous ne l'avez pas installé dans votre environnement, vous pouvez l'installer avec `pip install uv`.
 
-``` 
-uv pip install -r pyproject.toml
+`uv` créera automatiquement un environnement virtuel et installera les dépendances à partir de `pyproject.toml`.
+
+```
+uv pip sync
 ```
