@@ -14,20 +14,18 @@ from openai import RateLimitError
 
 
 MODEL_MAP = {
-    "gpt-4o-mini": "gpt-4o-mini",
-    "claude-3-5-sonnet-20240620": "claude-3-5-sonnet-20240620",
-    "gpt-4o": "gpt-4o-2024-08-06",
-    "gpt-4-turbo": "gpt-4-turbo",
-    "o1-preview": "o1-preview",
-    "o1-mini": "o1-mini",
-    "claude-3-opus-20240229": "claude-3-opus-20240229",
-    "command-r-plus": "command-r-plus-08-2024",
-    "gemini-1.5-pro": "gemini/gemini-1.5-pro",
-    "llama3-405b-instruct": "fireworks_ai/accounts/fireworks/models/llama-v3p1-405b-instruct",
-    "claude-3-haiku": "claude-3-haiku-20240307",
-    "gemini-1.5-pro-002": "gemini/gemini-1.5-pro-002",
-    "mistral-large": "mistral/mistral-large-2407",
-    "grok-2": "openrouter/x-ai/grok-2"
+    "llama3": "llama3",
+    "llama2": "llama2",
+    "codellama": "codellama",
+    "mistral": "mistral",
+    "mixtral": "mixtral",
+    "llava": "llava",
+    "gemma": "gemma",
+    "phi3": "phi3",
+    "qwen2": "qwen2",
+    "qwen3:14b-q4_K_M": "qwen3:14b-q4_K_M",
+    "command-r": "command-r",
+    "command-r-plus": "command-r-plus",
 }
 
 EXPONENTIAL_BASE = 2    
@@ -57,10 +55,7 @@ class LiteLLMModel(weave.Model):
         if self.model_name not in MODEL_MAP:
             raise ValueError(f"Invalid model name: {self.model_name}")
 
-        if "o1" in self.model_name: 
-            self.temp = None
-            self.top_p = None
-            self.max_tokens = None
+        self.model_name = f"ollama/{self.model_name}"
 
     
     @weave.op()
@@ -80,7 +75,7 @@ class LiteLLMModel(weave.Model):
                     "content": prompt
                 })
                 response = await acompletion(
-                    model=MODEL_MAP[self.model_name],
+                    model=self.model_name,
                     messages=messages,
                     temperature=self.temp,
                     max_tokens=self.max_tokens,

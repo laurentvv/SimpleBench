@@ -2,35 +2,62 @@
 
 https://simple-bench.com/
 
-## Run Instructions
+Ce dépôt a été modifié pour tester exclusivement les modèles utilisant Ollama.
 
-Run benchmark:
+## Instructions d'exécution
+
+Assurez-vous d'abord qu'Ollama est installé et en cours d'exécution. Vous pouvez le télécharger sur [https://ollama.com/](https://ollama.com/).
+
+Une fois Ollama en cours d'exécution, vous pouvez télécharger les modèles que vous souhaitez tester. Par exemple, pour télécharger le modèle `qwen3:14b-q4_K_M`, exécutez :
+
 ```
-python run_benchmark.py --model_name=gpt-4o --dataset_path=simple_bench_public.json
+ollama pull qwen3:14b-q4_K_M
 ```
 
-## Setup Instructions
+Ensuite, exécutez le benchmark :
+```
+python run_benchmark.py --model_name=qwen3:14b-q4_K_M --dataset_path=simple_bench_public.json
+```
 
-Clone the github repo and cd into it.
+## Comment ajouter de nouveaux modèles
 
-Make sure you have the correct python version (3.10.11) as a venv:
+Pour ajouter un nouveau modèle, vous devez le modifier le dictionnaire `MODEL_MAP` dans le fichier `weave_utils/models.py`.
+
+Par exemple, pour ajouter le modèle `my-new-model`, vous devez modifier le dictionnaire comme suit :
+
+```python
+MODEL_MAP = {
+    "llama3": "llama3",
+    "llama2": "llama2",
+    "codellama": "codellama",
+    "mistral": "mistral",
+    "mixtral": "mixtral",
+    "llava": "llava",
+    "gemma": "gemma",
+    "phi3": "phi3",
+    "qwen2": "qwen2",
+    "qwen2:14b": "qwen2:14b",
+    "command-r": "command-r",
+    "command-r-plus": "command-r-plus",
+    "my-new-model": "my-new-model",
+}
+```
+
+## Instructions de configuration
+
+Clonez le dépôt github et placez-vous dedans.
+
+Assurez-vous d'avoir la bonne version de python (3.10.11) en tant que venv :
 ```
 pyenv local 3.10.11
 python -m venv llm_env
 source llm_env/bin/activate
 ```
 
-Install dependencies:
+Installez les dépendances:
 
-The best way to install dependencies is to use `uv`. If you don't have it installed in your environment, you can install it with `pip install uv`.
+La meilleure façon d'installer les dépendances est d'utiliser `uv`. Si vous ne l'avez pas installé dans votre environnement, vous pouvez l'installer avec `pip install uv`.
 
 ``` 
 uv pip install -r pyproject.toml
-```
-
-Create a `.env` file with the following:
-```
-OPENAI_API_KEY=<your key>
-ANTHROPIC_API_KEY=<your key>
-...
 ```
