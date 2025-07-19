@@ -14,7 +14,6 @@ from openai import RateLimitError
 
 
 MODEL_MAP = {
-    "qwen3:14b": "qwen3:14b",
     "llama3": "llama3",
     "llama2": "llama2",
     "codellama": "codellama",

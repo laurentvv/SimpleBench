@@ -1,4 +1,0 @@
-fire
-litellm
-python-dotenv
-weave

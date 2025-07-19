@@ -59,16 +59,16 @@ def run_benchmark(
         python run_benchmark.py --model_name=gpt-4o-mini --dataset_path=simple_bench_public.json --num_responses=3
     """
 
-    # if entity is not None:
-    #     weave.init(f"{entity}/{project}")
-    # else:
-    #     weave.init(f"{project}")
+    if entity is not None:
+        weave.init(f"{entity}/{project}")
+    else:
+        weave.init(f"{project}")
 
-    # evaluation = weave.Evaluation(
-    #     dataset=load_dataset(dataset_path),
-    #     scorers=[eval_majority_vote if num_responses > 1 else eval_multi_choice],
-    #     trials=1,
-    # )
+    evaluation = weave.Evaluation(
+        dataset=load_dataset(dataset_path),
+        scorers=[eval_majority_vote if num_responses > 1 else eval_multi_choice],
+        trials=1,
+    )
 
     with open(system_prompt_path, "r") as f:
         system_prompt = f.read().strip()
@@ -85,8 +85,8 @@ def run_benchmark(
     if num_responses > 1:
         model = MajorityVoteModel(model=model, num_responses=num_responses)
 
-    # asyncio.run(evaluation.evaluate(model))
-    asyncio.run(model.predict("hello"))
+    result = asyncio.run(evaluation.evaluate(model))
+    print(result)
 
 
 if __name__ == "__main__":
