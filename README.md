@@ -1,25 +1,48 @@
 # Simple Bench
 
-https://simple-bench.com/
+Ce projet est un benchmark simple pour évaluer les modèles de langage. Il a été modifié pour tester exclusivement les modèles utilisant Ollama.
 
-Ce dépôt a été modifié pour tester exclusivement les modèles utilisant Ollama.
+## Table des matières
 
-## Instructions d'exécution
+- [Prérequis](#prérequis)
+- [Installation](#installation)
+- [Exécution du benchmark](#exécution-du-benchmark)
+- [Ajout de nouveaux modèles](#ajout-de-nouveaux-modèles)
 
-Assurez-vous d'abord qu'Ollama est installé et en cours d'exécution. Vous pouvez le télécharger sur [https://ollama.com/](https://ollama.com/).
+## Prérequis
 
-Une fois Ollama en cours d'exécution, vous pouvez télécharger les modèles que vous souhaitez tester. Par exemple, pour télécharger le modèle `qwen3:14b-q4_K_M`, exécutez :
+- Python 3.13.5 ou supérieur
+- [Ollama](https://ollama.com/)
 
-```
-ollama pull qwen3:14b-q4_K_M
-```
+## Installation
 
-Ensuite, exécutez le benchmark :
-```
-python run_benchmark.py --model_name=qwen3:14b-q4_K_M --dataset_path=simple_bench_public.json
-```
+1.  Clonez le dépôt :
+    ```bash
+    git clone https://github.com/simple-bench/simple-bench.git
+    cd simple-bench
+    ```
 
-## Comment ajouter de nouveaux modèles
+2.  Installez les dépendances à l'aide de `uv` :
+    ```bash
+    uv pip sync --python 3.13.5
+    ```
+    Si vous n'avez pas `uv`, vous pouvez l'installer avec `pip install uv`. `uv` créera automatiquement un environnement virtuel et installera les dépendances à partir de `pyproject.toml`.
+
+## Exécution du benchmark
+
+1.  Assurez-vous qu'Ollama est en cours d'exécution.
+
+2.  Téléchargez le modèle que vous souhaitez tester. Par exemple, pour télécharger le modèle `qwen3:14b-q4_K_M`, exécutez :
+    ```bash
+    ollama pull qwen3:14b-q4_K_M
+    ```
+
+3.  Exécutez le benchmark :
+    ```bash
+    python run_benchmark.py --model_name=qwen3:14b-q4_K_M --dataset_path=simple_bench_public.json
+    ```
+
+## Ajout de nouveaux modèles
 
 Pour ajouter un nouveau modèle, vous devez le modifier le dictionnaire `MODEL_MAP` dans le fichier `weave_utils/models.py`.
 
@@ -41,18 +64,4 @@ MODEL_MAP = {
     "command-r-plus": "command-r-plus",
     "my-new-model": "my-new-model",
 }
-```
-
-## Instructions de configuration
-
-Clonez le dépôt github et placez-vous dedans.
-
-Installez les dépendances:
-
-La meilleure façon d'installer les dépendances est d'utiliser `uv`. Si vous ne l'avez pas installé dans votre environnement, vous pouvez l'installer avec `pip install uv`.
-
-`uv` créera automatiquement un environnement virtuel avec Python 3.13.5 et installera les dépendances à partir de `pyproject.toml`.
-
-```
-uv pip sync --python 3.13.5
 ```
