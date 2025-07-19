@@ -51,8 +51,8 @@ Installez les dépendances:
 
 La meilleure façon d'installer les dépendances est d'utiliser `uv`. Si vous ne l'avez pas installé dans votre environnement, vous pouvez l'installer avec `pip install uv`.
 
-`uv` créera automatiquement un environnement virtuel et installera les dépendances à partir de `pyproject.toml`.
+`uv` créera automatiquement un environnement virtuel avec Python 3.13.5 et installera les dépendances à partir de `pyproject.toml`.
 
 ```
-uv pip sync
+uv pip sync --python 3.13.5
 ```
