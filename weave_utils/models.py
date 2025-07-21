@@ -53,10 +53,15 @@ class LiteLLMModel(weave.Model):
     def __init__(self, **data):
         super().__init__(**data)
         # Add any additional initialization logic here
-        if self.model_name not in MODEL_MAP:
-            raise ValueError(f"Invalid model name: {self.model_name}")
+        # Vérifier si le modèle est dans MODEL_MAP ou s'il commence déjà par 'ollama/'
+        if self.model_name not in MODEL_MAP and not self.model_name.startswith('ollama/'):
+            # Ajouter automatiquement le modèle au dictionnaire
+            MODEL_MAP[self.model_name] = self.model_name
+            print(f"Modèle ajouté automatiquement: {self.model_name}")
 
-        self.model_name = f"ollama/{self.model_name}"
+        # Préfixer avec 'ollama/' seulement si ce n'est pas déjà fait
+        if not self.model_name.startswith('ollama/'):
+            self.model_name = f"ollama/{self.model_name}"
 
     
     @weave.op()
@@ -87,7 +92,7 @@ class LiteLLMModel(weave.Model):
                     return response.choices[0].message.content
                 else:
                     print(response)
-                    raise Exception("No content in response")
+                    return "[MODEL_LIMIT_REACHED] No content in response"
             except RateLimitError as e:
                 delay *= EXPONENTIAL_BASE * (1 + random.random())
                 print(
@@ -97,6 +102,9 @@ class LiteLLMModel(weave.Model):
                 continue
             except Exception as e:
                 print(f"Error in retry {i+1}, retrying...", e)
+                if i == self.max_retries - 1:  # Dernière tentative
+                    if "maximum context length" in str(e).lower() or "token limit" in str(e).lower():
+                        return f"[MODEL_LIMIT_REACHED] {str(e)}"
                 continue
 
-        raise Exception("Failed to get response after max retries")
+        return "[MODEL_LIMIT_REACHED] Failed to get response after max retries"

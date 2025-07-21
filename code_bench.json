@@ -1,0 +1,54 @@
+{
+  "eval_data": [
+    {
+      "question_id": 1,
+      "prompt": "Un développeur écrit une fonction `calculer(a, b)` qui doit retourner la somme de deux nombres. Il la teste avec `calculer(\"5\", \"10\")` dans un langage comme Python ou JavaScript. Le développeur est persuadé que le langage est assez intelligent pour comprendre son intention. Quel est le résultat le plus probable ?\nA. 15\nB. \"15\"\nC. Une erreur\nD. 510\nE. \"510\"\nF. 5",
+      "answer": "E"
+    },
+    {
+      "question_id": 2,
+      "prompt": "Une développeuse souhaite afficher un message juste avant la fin d'une boucle. Son code est le suivant : `for (let i = 0; i < 3; i++) { if (i = 2) { console.log(\"Dernier tour !\"); } }`. Elle s'attend à ce que le message ne s'affiche qu'une seule fois. Combien de fois le message \"Dernier tour !\" sera-t-il affiché ?\nA. 0 fois\nB. 1 fois\nC. 2 fois\nD. 3 fois\nE. Le code provoquera une erreur\nF. En continu",
+      "answer": "D"
+    },
+    {
+      "question_id": 3,
+      "prompt": "Un designer web stylise un bouton avec le code HTML `<button id=\"mon-bouton\" class=\"btn-principal\">OK</button>`. Il a deux règles CSS dans sa feuille de style : `#mon-bouton { color: blue; }` et `.btn-principal { color: red !important; }`. Le designer pense que les ID ont toujours la priorité. De quelle couleur sera le texte du bouton ?\nA. Bleu\nB. Rouge\nC. Violet (un mélange des deux)\nD. Noir (la couleur par défaut)\nE. Le texte sera invisible\nF. Blanc",
+      "answer": "B"
+    },
+    {
+      "question_id": 4,
+      "prompt": "Un programme doit vérifier si un produit est en stock. La quantité est récupérée depuis une base de données. Le programmeur écrit : `if (quantite) { console.log(\"En stock\"); }`. Suite à une erreur de réseau, la variable `quantite` n'est pas initialisée et reste à sa valeur par défaut, `undefined`. Qu'affichera le programme ?\nA. \"En stock\"\nB. Une erreur car `quantite` n'est pas définie\nC. \"Hors stock\"\nD. Rien ne sera affiché\nE. 0\nF. null",
+      "answer": "D"
+    },
+    {
+      "question_id": 5,
+      "prompt": "Pour déboguer un problème complexe, un ingénieur crée une fonction récursive `explorer(chemin)` qui s'appelle elle-même pour analyser des dossiers. Il la lance sur un dossier de départ. Cependant, il a oublié d'écrire la condition qui arrête la fonction une fois qu'il n'y a plus de sous-dossiers. Quel est le résultat le plus probable ?\nA. La fonction s'arrêtera et retournera `null`\nB. La fonction s'exécutera indéfiniment sans s'arrêter\nC. L'ordinateur va surchauffer et s'éteindre\nD. Le programme plantera avec une erreur de \"dépassement de la pile d'appels\" (stack overflow)\nE. La fonction supprimera les fichiers\nF. L'écran deviendra bleu.",
+      "answer": "D"
+    },
+    {
+      "question_id": 6,
+      "prompt": "Une analyste financière utilise JavaScript pour une petite calculation et tape la ligne de code suivante dans sa console : `console.log(0.1 + 0.2 === 0.3);`. Elle s'attend à voir `true` s'afficher, confirmant que tout fonctionne. Que va réellement afficher la console ?\nA. true\nB. false\nC. 0.3\nD. 0.30000000000000004\nE. undefined\nF. null",
+      "answer": "B"
+    },
+    {
+      "question_id": 7,
+      "prompt": "Un programmeur a un tableau `let scores = [10, 20, 30];`. Il passe ce tableau à une fonction `reinitialiser(tab)` qui est définie comme suit : `function reinitialiser(tab) { tab = []; }`. Après avoir appelé `reinitialiser(scores)`, il affiche le tableau `scores` original. Quel sera le résultat ?\nA. `[]`\nB. `[null, null, null]`\nC. `[10, 20, 30]`\nD. Une erreur\nE. `undefined`\nF. `[0, 0, 0]`",
+      "answer": "C"
+    },
+    {
+      "question_id": 8,
+      "prompt": "Un développeur a besoin de récupérer des données utilisateur depuis une API. Il écrit le code suivant :\n`console.log(\"Début de la récupération\");`\n`let data = fetch('api/utilisateur/1');`\n`console.log(\"Utilisateur récupéré :\");`\n`console.log(data);`\nEn regardant la console après l'exécution, que contient la variable `data` au moment où elle est affichée ?\nA. Les données de l'utilisateur\nB. Un objet Promise\nC. null\nD. undefined\nE. Une erreur\nF. La chaîne \"Utilisateur récupéré :\"",
+      "answer": "B"
+    },
+    {
+      "question_id": 9,
+      "prompt": "Un script doit exécuter une action uniquement si une variable `autorisation` est exactement `false`. Distrait par son café, le programmeur écrit `if (!autorisation)` pour vérifier cette condition. La variable `autorisation` contient la chaîne de caractères `\"false\"`. L'action sera-t-elle exécutée ?\nA. Oui, car la chaîne \"false\" est interprétée comme false\nB. Non, car une chaîne de caractères non vide est \"truthy\"\nC. Le code générera une erreur de type\nD. Oui, car `!` convertit la chaîne en booléen\nE. Oui, mais seulement sur certains navigateurs\nF. Non, car la variable n'existe pas",
+      "answer": "B"
+    },
+    {
+      "question_id": 10,
+      "prompt": "Un programme contient la ligne suivante : `let resultat = \"Il y a \" + 5 + 5 + \" moutons.\"`. Le développeur veut que la phrase finale soit \"Il y a 10 moutons.\". Quel sera le contenu réel de la variable `resultat` ?\nA. \"Il y a 10 moutons.\"\nB. \"Il y a 55 moutons.\"\nC. Une erreur\nD. \"Il y a 5 + 5 moutons.\"\nE. \"10 moutons.\"\nF. \"Il y a moutons.\"",
+      "answer": "B"
+    }
+  ]
+}

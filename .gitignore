@@ -1,8 +1,11 @@
+# Fichiers de résultats et données générées
 simple_bench.csv
-output.json
-output_o1.json
+output*.json
 run_data/
+weave_export_*.jsonl
+archive/
 
+# Fichiers d'environnement Python
 .python-version
 
 # Byte-compiled / optimized / DLL files
