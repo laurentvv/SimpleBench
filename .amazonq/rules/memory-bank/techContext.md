@@ -20,27 +20,24 @@
 - **Environnement virtuel Python** : Créé automatiquement par uv
 
 ## Structure des Fichiers
-- **run_benchmark.py** / **run_benchmark_new.py** : Scripts principaux pour exécuter les benchmarks
-- **convert_dataset.py** : Utilitaire pour convertir les formats de dataset
+- **run_benchmark_new.py** : Script principal pour exécuter les benchmarks
+- **analyze_results.py** : Script pour analyser les statistiques des résultats
+- **verify_responses.py** : Script pour vérifier les réponses individuelles
 - **weave_utils/** : Modules utilitaires pour l'intégration avec Weave
   - **models.py** : Définitions des modèles
   - **scorers.py** : Fonctions d'évaluation
 
-## Format de Données
-- **Dataset JSON** : Format utilisé pour les questions et réponses
-  ```json
-  {
-    "eval_data": [
-      {
-        "question_id": 0,
-        "prompt": "Question...",
-        "answer": "Réponse attendue"
-      },
-      ...
-    ]
-  }
-  ```
+## Datasets Supportés
+- **HumanEval** : Benchmark d'OpenAI pour l'évaluation de la génération de code
+- **CruxEval** : Benchmark pour évaluer les capacités de raisonnement
+- **Code-X-GLUE** : Benchmark de Google pour les tâches liées au code
+
+## Fonctionnalités Clés
+- **Détection automatique des datasets** : Identification du type de dataset basée sur le nom du fichier ou son contenu
+- **Prompts système intégrés** : Prompts spécifiques pour chaque type de dataset
+- **Évaluation adaptative** : Méthodes d'évaluation adaptées selon le type de dataset
+- **Normalisation des réponses** : Plusieurs méthodes pour comparer les réponses malgré les différences de formatage
 
 ## Configuration
-- **Prompt système** : Défini dans un fichier texte séparé
 - **Paramètres du modèle** : Température, top_p, max_tokens, etc.
+- **Options de benchmark** : Type de dataset, nombre de réponses pour le vote majoritaire, etc.

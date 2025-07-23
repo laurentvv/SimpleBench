@@ -13,8 +13,8 @@ SimpleBench est un outil léger et efficace pour évaluer les performances des m
 ## ✨ Caractéristiques
 
 - 🚀 **Simple d'utilisation** - Interface en ligne de commande intuitive
-- 🔄 **Détection automatique des modèles** - Pas besoin de configuration manuelle
-- 📊 **Évaluation robuste** - Tolère les différences de formatage dans les réponses
+- 🔄 **Support multi-datasets** - Compatible avec HumanEval, CruxEval et Code-X-GLUE
+- 📊 **Évaluation avancée** - Tolère les différences de formatage, d'indentation et d'équivalence fonctionnelle
 - 📈 **Analyse détaillée** - Scripts d'analyse des performances inclus
 - 🧩 **Extensible** - Facile à adapter pour différents types de benchmarks
 
@@ -47,9 +47,16 @@ SimpleBench est un outil léger et efficace pour évaluer les performances des m
    ollama pull qwen3:14b
    ```
 
-3. Exécutez le benchmark :
+3. Exécutez le benchmark avec un dataset au choix :
    ```bash
-   python run_benchmark_new.py --model_name=qwen3:14b --dataset_path=converted_code_bench.json
+   # Pour HumanEval
+   python run_benchmark_final.py --model_name=qwen3:14b --dataset_source=sql-console-for-openai-openai-humaneval.json
+   
+   # Pour CruxEval
+   python run_benchmark_final.py --model_name=qwen3:14b --dataset_source=sql-console-for-cruxeval-org-cruxeval.json
+   
+   # Pour Code-X-GLUE
+   python run_benchmark_final.py --model_name=qwen3:14b --dataset_source=sql-console-for-google-code-x-glue-ct-code-to-text.json
    ```
 
 ### Options disponibles
@@ -57,99 +64,61 @@ SimpleBench est un outil léger et efficace pour évaluer les performances des m
 | Option | Description | Valeur par défaut |
 |--------|-------------|-------------------|
 | `--model_name` | Nom du modèle Ollama à tester | qwen3:14b |
-| `--dataset_path` | Chemin vers le fichier JSON du dataset | ./converted_code_bench.json |
+| `--dataset_source` | Chemin vers le fichier source du dataset | ./sql-console-for-openai-openai-humaneval.json |
+| `--dataset_type` | Type de dataset (humaneval, cruxeval, code_x_glue) | auto-détecté |
 | `--num_responses` | Nombre de réponses pour le vote majoritaire | 1 |
 | `--temp` | Température pour le modèle | 0.7 |
 | `--max_tokens` | Nombre maximum de tokens à générer | 2048 |
 | `--top_p` | Valeur top_p pour le modèle | 0.95 |
 | `--max_retries` | Nombre maximum de tentatives en cas d'erreur | 3 |
+| `--custom_system_prompt` | Prompt système personnalisé | prompt par défaut selon le dataset |
 
 ## 📊 Analyse des résultats
 
-Après avoir exécuté le benchmark, vous pouvez analyser les résultats avec les scripts fournis :
+Le script `run_benchmark_final.py` affiche automatiquement les résultats détaillés de l'évaluation, notamment :
 
-### Statistiques générales
-
-```bash
-python analyze_results.py weave_export_simple_bench_[date].jsonl
-```
-
-Ce script affiche :
-- Le nombre total de questions
+- Le nombre total de questions évaluées
 - Le nombre et pourcentage de réponses correctes
-- Le nombre et pourcentage de réponses incorrectes
-- Le nombre et pourcentage de cas où la limite du modèle a été atteinte
+- La répartition des réponses correctes par méthode d'évaluation :
+  - Normalisation basique (correspondance exacte après nettoyage)
+  - Normalisation avancée (gestion de l'indentation)
+  - Normalisation extrême (suppression des espaces et sauts de ligne)
+  - Comparaison AST (analyse de la structure syntaxique)
+  - Équivalence IA (détection d'équivalence fonctionnelle)
 
-### Vérification détaillée des réponses
+Ces statistiques détaillées vous permettent de comprendre précisément les performances du modèle et les types de réponses qu'il génère.
 
-```bash
-python verify_responses.py weave_export_simple_bench_[date].jsonl
-```
+## 🧩 Datasets supportés
 
-Ce script affiche une comparaison détaillée entre les réponses du modèle et les réponses attendues pour chaque question.
+SimpleBench supporte nativement plusieurs datasets populaires pour l'évaluation des modèles de langage :
 
-## 🧩 Ajout de nouveaux modèles
+### HumanEval
 
-Le script détecte automatiquement les nouveaux modèles Ollama, il n'est donc plus nécessaire de modifier manuellement le code. Il suffit de spécifier le nom du modèle dans la commande :
+[HumanEval](https://huggingface.co/datasets/openai/openai_humaneval) est un benchmark d'OpenAI pour évaluer les capacités de génération de code. Il contient des problèmes de programmation Python avec des solutions et des tests.
 
-```bash
-python run_benchmark_new.py --model_name=nom-du-modele --dataset_path=converted_code_bench.json
-```
+### CruxEval
 
-Par exemple, pour tester le modèle `llama3:8b` :
+[CruxEval](https://huggingface.co/datasets/cruxeval-org/cruxeval) est un ensemble de problèmes de programmation conçu pour évaluer les capacités de raisonnement des modèles de langage.
 
-```bash
-ollama pull llama3:8b
-python run_benchmark_new.py --model_name=llama3:8b --dataset_path=converted_code_bench.json
-```
+### Code-X-GLUE
 
-Le modèle sera automatiquement préfixé avec "ollama/" et configuré lors de l'exécution.
+[CodeXGLUE](https://huggingface.co/datasets/google/code_x_glue_ct_code_to_text) est un benchmark de Google pour diverses tâches liées au code, notamment la génération de descriptions à partir de code source.
 
-## 📝 Format du dataset
+## 🔧 Détection automatique des datasets
 
-### Source des questions
+SimpleBench détecte automatiquement le type de dataset en fonction du nom du fichier ou de son contenu. Vous pouvez également spécifier explicitement le type avec l'option `--dataset_type`.
 
-Les questions utilisées dans ce benchmark proviennent du dataset [CruxEval](https://huggingface.co/datasets/cruxeval-org/cruxeval), un ensemble de problèmes de programmation conçu pour évaluer les capacités de raisonnement des modèles de langage.
+## 💯 Évaluation avancée
 
-### Structure du dataset
+SimpleBench utilise une approche d'évaluation avancée qui combine plusieurs méthodes pour détecter les réponses correctes :
 
-Les datasets doivent être au format JSON avec la structure suivante :
+1. **Normalisation basique** : Supprime les balises et normalise les espaces
+2. **Normalisation avancée** : Gère intelligemment l'indentation et les sauts de ligne
+3. **Normalisation extrême** : Supprime tous les espaces et sauts de ligne pour détecter les réponses qui diffèrent uniquement par le formatage
+4. **Comparaison AST** : Analyse la structure syntaxique du code pour détecter les équivalences structurelles
+5. **Évaluation par IA** : Utilise un modèle de langage pour détecter les équivalences fonctionnelles
 
-```json
-{
-  "eval_data": [
-    {
-      "question_id": 0,
-      "prompt": "Question...",
-      "answer": "Réponse attendue"
-    },
-    ...
-  ]
-}
-```
-
-### Conversion de datasets
-
-Le script `convert_dataset.py` permet de convertir les données du format JSONL original de CruxEval vers le format JSON utilisé par SimpleBench :
-
-```bash
-python convert_dataset.py
-```
-
-Ce script :
-- Lit le fichier JSONL source (`test.jsonl_copy.txt`)
-- Extrait les questions, entrées et sorties attendues
-- Formate les prompts en français
-- Génère un fichier JSON compatible (`converted_code_bench.json`)
-
-### Datasets additionnels à tester
-
-SimpleBench peut être adapté pour fonctionner avec d'autres datasets de référence pour l'évaluation des modèles de langage sur des tâches de programmation :
-
-- [HumanEval](https://huggingface.co/datasets/openai/openai_humaneval) - Un benchmark d'OpenAI pour évaluer les capacités de génération de code
-- [CodeXGLUE](https://huggingface.co/datasets/google/code_x_glue_ct_code_to_text) - Un benchmark de Google pour diverses tâches liées au code
-
-Pour utiliser ces datasets, il faudra adapter le script de conversion pour transformer leurs formats spécifiques au format JSON attendu par SimpleBench.
+Cette approche permet de détecter beaucoup plus précisément les réponses correctes, même lorsqu'elles diffèrent de la solution attendue en termes de style, de noms de variables ou d'approche algorithmique.
 
 ## 🤝 Contribution
 

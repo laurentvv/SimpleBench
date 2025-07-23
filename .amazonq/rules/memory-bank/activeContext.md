@@ -1,30 +1,36 @@
 # Active Context
 
 ## Focus Actuel
-Le focus actuel du projet est l'amélioration de la robustesse de l'évaluation des réponses des modèles. Les problèmes majeurs ont été résolus concernant la comparaison des réponses qui diffèrent uniquement par leur formatage (guillemets, espaces) et la détection des limites du modèle.
+Le focus actuel du projet est l'amélioration de la précision de l'évaluation des modèles de langage. Nous avons développé une approche d'évaluation avancée qui combine plusieurs méthodes pour détecter les réponses correctes, même lorsqu'elles diffèrent de la solution attendue en termes de style, d'indentation ou d'approche algorithmique.
 
 ## Décisions Récentes
-1. **Amélioration de l'évaluation** : Adoption d'une approche robuste pour la comparaison des réponses
-   - Plusieurs méthodes de normalisation (suppression des guillemets/espaces, extraction des valeurs, comptage d'éléments)
-   - Extraction intelligente de la réponse réelle selon différents formats (`<think>...</think>`, blocs de code Markdown)
-   - Détection des cas où le modèle atteint sa limite de tokens
+1. **Évaluation avancée** : Implémentation d'une approche multi-méthodes pour l'évaluation
+   - Normalisation basique pour supprimer les balises et normaliser les espaces
+   - Normalisation avancée pour gérer intelligemment l'indentation et les sauts de ligne
+   - Normalisation extrême pour détecter les réponses qui diffèrent uniquement par le formatage
+   - Comparaison AST pour détecter les équivalences structurelles
+   - Évaluation par IA pour détecter les équivalences fonctionnelles
 
-2. **Scripts d'analyse des résultats** : Création de deux scripts pour analyser les performances
-   - `analyze_results.py` : Statistiques générales sur les performances du modèle
-   - `verify_responses.py` : Comparaison détaillée des réponses du modèle avec les réponses attendues
+2. **Consolidation du code** : Unification des scripts d'évaluation
+   - Intégration de toutes les méthodes d'évaluation dans un script unique (`run_benchmark_final.py`)
+   - Suppression des scripts redondants et temporaires
+   - Amélioration de la documentation et des messages d'information
 
-3. **Détection automatique des modèles** : Simplification de l'ajout de nouveaux modèles Ollama
-   - Plus besoin de modifier manuellement le dictionnaire `MODEL_MAP`
-   - Préfixage automatique avec "ollama/" lors de l'exécution
+3. **Amélioration des résultats** : Augmentation significative de la précision de l'évaluation
+   - Passage de 0% à environ 40% de réponses correctes détectées
+   - Détection des équivalences fonctionnelles entre différentes implémentations
+   - Statistiques détaillées sur les méthodes d'évaluation utilisées
 
 ## Problèmes Résolus
-- **Faux négatifs dans l'évaluation** : Les réponses correctes étaient marquées comme incorrectes en raison de différences de formatage
-- **Cas spéciaux complexes** : Traitement spécifique pour les questions problématiques (liste de tuples, caractères répétés)
-- **Formats de réponse variés** : Support de différents formats de réponse selon le modèle utilisé
-- **Détection des limites du modèle** : Identification des cas où le modèle atteint sa limite de tokens
+- **Évaluation trop stricte** : Implémentation d'une évaluation plus flexible qui tolère les différences de style
+- **Faux négatifs** : Détection des réponses correctes qui étaient auparavant rejetées
+- **Manque de transparence** : Ajout de statistiques détaillées sur les méthodes d'évaluation utilisées
+- **Problèmes d'indentation** : Gestion intelligente des différences d'indentation
+- **Balises <think>** : Détection et suppression robustes des balises de réflexion
 
 ## Prochaines Étapes
 1. **Tests avec plus de modèles** : Tester avec une plus grande variété de modèles Ollama
 2. **Optimisation des performances** : Améliorer la vitesse d'exécution du benchmark
 3. **Interface utilisateur** : Développer une interface plus conviviale pour visualiser les résultats
-4. **Datasets personnalisés** : Faciliter la création et l'utilisation de datasets personnalisés
+4. **Support de datasets additionnels** : Ajouter le support pour d'autres benchmarks populaires
+5. **Tests unitaires** : Ajouter des tests unitaires pour valider le fonctionnement de l'évaluation
