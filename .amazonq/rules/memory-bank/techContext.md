@@ -20,7 +20,7 @@
 - **Environnement virtuel Python** : Créé automatiquement par uv
 
 ## Structure des Fichiers
-- **run_benchmark_new.py** : Script principal pour exécuter les benchmarks
+- **run_benchmark_final.py** : Script principal pour exécuter les benchmarks
 - **analyze_results.py** : Script pour analyser les statistiques des résultats
 - **verify_responses.py** : Script pour vérifier les réponses individuelles
 - **weave_utils/** : Modules utilitaires pour l'intégration avec Weave

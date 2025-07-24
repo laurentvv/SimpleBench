@@ -1,129 +1,186 @@
-# SimpleBench
+# Bench AI with Ollama/LMStudio
 
 <div align="center">
 
-![SimpleBench Logo](https://img.shields.io/badge/SimpleBench-Benchmark%20for%20LLMs-blue)
+[![English](https://img.shields.io/badge/lang-en-blue.svg)](README.md) [![中文](https://img.shields.io/badge/lang-zh-blue.svg)](lang/README.zh.md) [![हिंदी](https://img.shields.io/badge/lang-hi-blue.svg)](lang/README.hi.md) [![Español](https://img.shields.io/badge/lang-es-blue.svg)](lang/README.es.md) [![Français](https://img.shields.io/badge/lang-fr-blue.svg)](lang/README.fr.md) [![العربية](https://img.shields.io/badge/lang-ar-blue.svg)](lang/README.ar.md) [![বাংলা](https://img.shields.io/badge/lang-bn-blue.svg)](lang/README.bn.md) [![Русский](https://img.shields.io/badge/lang-ru-blue.svg)](lang/README.ru.md) [![Português](https://img.shields.io/badge/lang-pt-blue.svg)](lang/README.pt.md) [![Bahasa Indonesia](https://img.shields.io/badge/lang-id-blue.svg)](lang/README.id.md)
+
+![Bench AI Logo](https://img.shields.io/badge/Bench%20AI-LLM%20Benchmark%20Tool-blue)
 [![Python 3.13+](https://img.shields.io/badge/python-3.13+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 </div>
 
-SimpleBench est un outil léger et efficace pour évaluer les performances des modèles de langage (LLMs) exécutés via [Ollama](https://ollama.com/). Il permet aux chercheurs et développeurs de comparer objectivement différents modèles sur des tâches standardisées de programmation et de raisonnement.
+Bench AI is a lightweight and efficient tool for evaluating the performance of language models (LLMs) running via [Ollama](https://ollama.com/) and LMStudio. It allows researchers and developers to objectively compare different models on standardized programming and reasoning tasks.
 
-## ✨ Caractéristiques
+## 🎯 Recent Results
 
-- 🚀 **Simple d'utilisation** - Interface en ligne de commande intuitive
-- 🔄 **Support multi-datasets** - Compatible avec HumanEval, CruxEval et Code-X-GLUE
-- 📊 **Évaluation avancée** - Tolère les différences de formatage, d'indentation et d'équivalence fonctionnelle
-- 📈 **Analyse détaillée** - Scripts d'analyse des performances inclus
-- 🧩 **Extensible** - Facile à adapter pour différents types de benchmarks
+- **Evaluation Accuracy**: 63% correct answers detected on HumanEval
+- **Evaluation Methods**: 5 complementary approaches (normalization, AST, AI)
+- **Reproducibility**: Consistent results across executions
 
-## 🛠️ Prérequis
+## ✨ Features
 
-- Python 3.13.5 ou supérieur
-- [Ollama](https://ollama.com/) installé et en cours d'exécution
+- 🚀 **Easy to use** - Intuitive command-line interface
+- 🔄 **Multi-dataset support** - Compatible with HumanEval, CruxEval, and Code-X-GLUE
+- 📊 **Advanced evaluation** - Tolerates formatting, indentation, and functional equivalence differences
+- 📈 **Detailed analysis** - Performance analysis scripts included
+- 🧩 **Extensible** - Easy to adapt for different types of benchmarks
+
+## 🛠️ Prerequisites
+
+- Python 3.13.5 or higher
+- [Ollama](https://ollama.com/) installed and running
 
 ## 📦 Installation
 
-1. Clonez le dépôt :
+1. Clone the repository:
    ```bash
-   git clone https://github.com/simple-bench/simple-bench.git
-   cd simple-bench
+   git clone https://github.com/laurentvv/bench-ai-ollama-lmstudio.git
+   cd bench-ai-ollama-lmstudio
    ```
 
-2. Créez un environnement virtuel et installez les dépendances :
+2. Create a virtual environment and install dependencies:
    ```bash
    python -m venv venv
-   source venv/bin/activate  # Sur Windows: venv\Scripts\activate
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
    pip install -r requirements.txt
    ```
 
-## 🚀 Exécution du benchmark
+## 🚀 Running the benchmark
 
-1. Assurez-vous qu'Ollama est en cours d'exécution.
+1. Make sure Ollama is running.
 
-2. Téléchargez le modèle que vous souhaitez tester :
+2. Download the model you want to test:
    ```bash
    ollama pull qwen3:14b
    ```
 
-3. Exécutez le benchmark avec un dataset au choix :
+3. Run the benchmark with a dataset of your choice:
    ```bash
-   # Pour HumanEval
-   python run_benchmark_final.py --model_name=qwen3:14b --dataset_source=sql-console-for-openai-openai-humaneval.json
+   # For HumanEval
+   python run_benchmark_production.py --model_name=qwen3:14b --dataset_source=sql-console-for-openai-openai-humaneval.json
    
-   # Pour CruxEval
-   python run_benchmark_final.py --model_name=qwen3:14b --dataset_source=sql-console-for-cruxeval-org-cruxeval.json
+   # For CruxEval
+   python run_benchmark_production.py --model_name=qwen3:14b --dataset_source=sql-console-for-cruxeval-org-cruxeval.json
    
-   # Pour Code-X-GLUE
-   python run_benchmark_final.py --model_name=qwen3:14b --dataset_source=sql-console-for-google-code-x-glue-ct-code-to-text.json
+   # For Code-X-GLUE
+   python run_benchmark_production.py --model_name=qwen3:14b --dataset_source=sql-console-for-google-code-x-glue-ct-code-to-text.json
    ```
 
-### Options disponibles
+## 📊 Tracking with Weave
 
-| Option | Description | Valeur par défaut |
-|--------|-------------|-------------------|
-| `--model_name` | Nom du modèle Ollama à tester | qwen3:14b |
-| `--dataset_source` | Chemin vers le fichier source du dataset | ./sql-console-for-openai-openai-humaneval.json |
-| `--dataset_type` | Type de dataset (humaneval, cruxeval, code_x_glue) | auto-détecté |
-| `--num_responses` | Nombre de réponses pour le vote majoritaire | 1 |
-| `--temp` | Température pour le modèle | 0.7 |
-| `--max_tokens` | Nombre maximum de tokens à générer | 2048 |
-| `--top_p` | Valeur top_p pour le modèle | 0.95 |
-| `--max_retries` | Nombre maximum de tentatives en cas d'erreur | 3 |
-| `--custom_system_prompt` | Prompt système personnalisé | prompt par défaut selon le dataset |
+Bench AI is integrated with [Weave](https://wandb.ai/site/weave), a powerful tool for tracking and visualizing your experiments.
 
-## 📊 Analyse des résultats
+### Weave Setup
 
-Le script `run_benchmark_final.py` affiche automatiquement les résultats détaillés de l'évaluation, notamment :
+1. **Create a Weave account**: Visit the [Weave website](https://wandb.ai/site/weave) and create a free account.
 
-- Le nombre total de questions évaluées
-- Le nombre et pourcentage de réponses correctes
-- La répartition des réponses correctes par méthode d'évaluation :
-  - Normalisation basique (correspondance exacte après nettoyage)
-  - Normalisation avancée (gestion de l'indentation)
-  - Normalisation extrême (suppression des espaces et sauts de ligne)
-  - Comparaison AST (analyse de la structure syntaxique)
-  - Équivalence IA (détection d'équivalence fonctionnelle)
+2. **Connect to Weave**: Once your account is created, you can connect via CLI (not necessary for this project, managed by API).
 
-Ces statistiques détaillées vous permettent de comprendre précisément les performances du modèle et les types de réponses qu'il génère.
+### Using Weave with SimpleBench
 
-## 🧩 Datasets supportés
+To enable tracking with Weave, use the `--entity` and `--project` options when running the benchmark:
 
-SimpleBench supporte nativement plusieurs datasets populaires pour l'évaluation des modèles de langage :
+```bash
+python run_benchmark_production.py \
+  --model_name=qwen3:14b \
+  --dataset_source=sql-console-for-openai-openai-humaneval.json \
+  --entity="your-weave-entity" \
+  --project="project-name"
+```
+
+- `--entity`: Your Weave username or organization.
+- `--project`: The project name under which you want to record the experiment.
+
+The evaluation results, including detailed scores and model predictions, will be automatically sent to your Weave project, allowing you to:
+
+- Compare performance across different models
+- Analyze prediction errors
+- Share your results with your team
+
+### Available options
+
+| Option | Description | Default value |
+|--------|-------------|---------------|
+| `--model_name` | Ollama model name to test | qwen3:14b |
+| `--dataset_source` | Path to dataset source file | ./sql-console-for-openai-openai-humaneval.json |
+| `--dataset_type` | Dataset type (humaneval, cruxeval, code_x_glue) | auto-detected |
+| `--num_responses` | Number of responses for majority voting | 1 |
+| `--temp` | Temperature for the model | 0.1 |
+| `--max_tokens` | Maximum number of tokens to generate | 2048 |
+| `--top_p` | Top_p value for the model | 0.95 |
+| `--max_retries` | Maximum number of retries on error | 3 |
+| `--custom_system_prompt` | Custom system prompt | default prompt based on dataset |
+
+## 📊 Results Analysis
+
+The `run_benchmark_production.py` script automatically displays detailed evaluation results, including:
+
+- Total number of questions evaluated
+- Number and percentage of correct answers
+- Total execution time
+- Breakdown of correct answers by evaluation method:
+  - **Basic normalization**: Exact match after cleanup
+  - **Advanced normalization**: Intelligent indentation handling
+  - **Extreme normalization**: Removal of spaces and line breaks
+  - **AST comparison**: Syntactic structure analysis
+  - **AI equivalence**: Functional equivalence detection
+
+These detailed statistics help you understand precisely the model's performance and the types of responses it generates.
+
+## 🧩 Supported Datasets
+
+Bench AI natively supports several popular datasets for language model evaluation:
+
+### 📁 Datasets included in this repository
+
+This repository contains **3 dataset files** with **30 questions each**:
+
+- **`sql-console-for-openai-openai-humaneval.json`** - HumanEval (30 questions)
+- **`sql-console-for-cruxeval-org-cruxeval.json`** - CruxEval (30 questions)  
+- **`sql-console-for-google-code-x-glue-ct-code-to-text.json`** - Code-X-GLUE (30 questions)
+
+> 💡 **For more questions**, check out the complete datasets on Hugging Face (links below)
 
 ### HumanEval
 
-[HumanEval](https://huggingface.co/datasets/openai/openai_humaneval) est un benchmark d'OpenAI pour évaluer les capacités de génération de code. Il contient des problèmes de programmation Python avec des solutions et des tests.
+[HumanEval](https://huggingface.co/datasets/openai/openai_humaneval) is an OpenAI benchmark for evaluating code generation capabilities. It contains Python programming problems with solutions and tests.
 
 ### CruxEval
 
-[CruxEval](https://huggingface.co/datasets/cruxeval-org/cruxeval) est un ensemble de problèmes de programmation conçu pour évaluer les capacités de raisonnement des modèles de langage.
+[CruxEval](https://huggingface.co/datasets/cruxeval-org/cruxeval) is a set of programming problems designed to evaluate the reasoning capabilities of language models.
 
 ### Code-X-GLUE
 
-[CodeXGLUE](https://huggingface.co/datasets/google/code_x_glue_ct_code_to_text) est un benchmark de Google pour diverses tâches liées au code, notamment la génération de descriptions à partir de code source.
+[CodeXGLUE](https://huggingface.co/datasets/google/code_x_glue_ct_code_to_text) is a Google benchmark for various code-related tasks, including generating descriptions from source code.
 
-## 🔧 Détection automatique des datasets
+## 🔧 Automatic Dataset Detection
 
-SimpleBench détecte automatiquement le type de dataset en fonction du nom du fichier ou de son contenu. Vous pouvez également spécifier explicitement le type avec l'option `--dataset_type`.
+Bench AI automatically detects the dataset type based on the filename or its content. You can also explicitly specify the type with the `--dataset_type` option.
 
-## 💯 Évaluation avancée
+## 💯 Advanced Evaluation
 
-SimpleBench utilise une approche d'évaluation avancée qui combine plusieurs méthodes pour détecter les réponses correctes :
+Bench AI uses an advanced evaluation approach that combines multiple methods to detect correct answers:
 
-1. **Normalisation basique** : Supprime les balises et normalise les espaces
-2. **Normalisation avancée** : Gère intelligemment l'indentation et les sauts de ligne
-3. **Normalisation extrême** : Supprime tous les espaces et sauts de ligne pour détecter les réponses qui diffèrent uniquement par le formatage
-4. **Comparaison AST** : Analyse la structure syntaxique du code pour détecter les équivalences structurelles
-5. **Évaluation par IA** : Utilise un modèle de langage pour détecter les équivalences fonctionnelles
+1. **Basic normalization**: Removes tags and normalizes spaces
+2. **Advanced normalization**: Intelligently handles indentation and line breaks
+3. **Extreme normalization**: Removes all spaces and line breaks to detect answers that differ only in formatting
+4. **AST comparison**: Analyzes code syntactic structure to detect structural equivalences
+5. **AI evaluation**: Uses a language model to detect functional equivalences
 
-Cette approche permet de détecter beaucoup plus précisément les réponses correctes, même lorsqu'elles diffèrent de la solution attendue en termes de style, de noms de variables ou d'approche algorithmique.
+This approach allows for much more precise detection of correct answers, even when they differ from the expected solution in terms of style, variable names, or algorithmic approach.
 
-## 🤝 Contribution
+## 🚀 Upcoming Features
 
-Les contributions sont les bienvenues ! N'hésitez pas à ouvrir une issue ou à soumettre une pull request.
+- LMStudio support for local models
+- MBPP dataset (Mostly Basic Python Problems)
+- Web interface for visualizing results
+- Automatic comparison between models
 
-## 📄 Licence
+## 🤝 Contributing
 
-Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.
+Contributions are welcome! Feel free to open an issue or submit a pull request.
+
+## 📄 License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
