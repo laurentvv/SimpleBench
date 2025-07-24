@@ -130,6 +130,16 @@ Ces statistiques détaillées vous permettent de comprendre précisément les pe
 
 Bench AI supporte nativement plusieurs datasets populaires pour l'évaluation des modèles de langage :
 
+### 📁 Datasets inclus dans ce dépôt
+
+Ce dépôt contient **3 fichiers de datasets** avec **30 questions chacun** :
+
+- **`sql-console-for-openai-openai-humaneval.json`** - HumanEval (30 questions)
+- **`sql-console-for-cruxeval-org-cruxeval.json`** - CruxEval (30 questions)  
+- **`sql-console-for-google-code-x-glue-ct-code-to-text.json`** - Code-X-GLUE (30 questions)
+
+> 💡 **Pour plus de questions**, consultez les datasets complets sur Hugging Face (liens ci-dessous)
+
 ### HumanEval
 
 [HumanEval](https://huggingface.co/datasets/openai/openai_humaneval) est un benchmark d'OpenAI pour évaluer les capacités de génération de code. Il contient des problèmes de programmation Python avec des solutions et des tests.
