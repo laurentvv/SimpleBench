@@ -13,6 +13,8 @@
 - ✅ Version production stabilisée
 - ✅ Documentation complète et README mis à jour
 - ✅ Nettoyage du code pour publication
+- ✅ Structure README multilingue (9 langues + anglais principal)
+- ✅ Organisation des traductions dans le répertoire lang/
 
 ## Problèmes Résolus
 - ✅ Inconsistance des résultats entre exécutions
@@ -33,7 +35,6 @@
 - ⏳ Dataset MBPP (Mostly Basic Python Problems)
 - ⏳ Support LMStudio pour modèles locaux
 - ⏳ Interface web de visualisation
-- ⏳ Publication sur GitHub
 - ⏳ Comparaison multi-modèles automatique
 
 ## Décisions Techniques
