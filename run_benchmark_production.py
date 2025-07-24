@@ -6,6 +6,7 @@ import os
 import re
 import ast
 import textwrap
+import time
 from fire import Fire
 from dotenv import load_dotenv
 load_dotenv()
@@ -32,24 +33,27 @@ Règles à suivre :
 2. Déterminez la sortie exacte que le programme produira.
 3. Répondez UNIQUEMENT avec la sortie, sans explication ni formatage supplémentaire.""",
     
-    "code_x_glue": """Vous êtes un assistant expert en programmation. Votre tâche est de générer une description en langage naturel pour un morceau de code Python.
+    "code_x_glue": """Vous êtes un assistant expert en programmation. Votre tâche est de générer une description en langage naturel pour un morceau de code.
 
 Règles à suivre :
-1. Lisez et comprenez la fonctionnalité du code fourni.
-2. Décrivez le but et le fonctionnement du code en français.
-3. Votre réponse doit être une description claire et concise."""
+1. Lisez et comprenez la fonctionnalité du code fourni (peu importe le langage de programmation).
+2. Décrivez le but et le fonctionnement du code de manière claire et concise.
+3. Votre réponse doit être une description technique précise mais accessible.
+4. NE PAS mentionner le langage de programmation dans votre réponse.
+5. Concentrez-vous sur la FONCTIONNALITÉ, pas sur la syntaxe."""
 }
 
-# Prompt pour l'évaluation par IA
-AI_EVALUATOR_PROMPT = """Vous êtes un évaluateur expert en programmation Python. Votre tâche est de déterminer si deux implémentations de fonction sont fonctionnellement équivalentes.
+# Prompts pour l'évaluation par IA selon le type de dataset
+AI_EVALUATOR_PROMPTS = {
+    "code": """Vous êtes un évaluateur expert en programmation. Votre tâche est de déterminer si deux implémentations de fonction sont fonctionnellement équivalentes.
 
 Voici la solution attendue :
-```python
+```
 {expected}
 ```
 
 Voici la solution proposée :
-```python
+```
 {actual}
 ```
 
@@ -57,8 +61,22 @@ Analysez attentivement les deux implémentations et déterminez si elles sont fo
 
 Ignorez les différences de style, de noms de variables, d'indentation ou de formatage. Concentrez-vous uniquement sur la fonctionnalité.
 
-Répondez UNIQUEMENT par "EQUIVALENT" ou "NON_EQUIVALENT", suivi d'une brève explication.
-"""
+Répondez UNIQUEMENT par "EQUIVALENT" ou "NON_EQUIVALENT", suivi d'une brève explication.""",
+    
+    "description": """Vous êtes un évaluateur expert en analyse de texte. Votre tâche est de déterminer si deux descriptions de code sont sémantiquement équivalentes.
+
+Voici la description attendue :
+{expected}
+
+Voici la description proposée :
+{actual}
+
+Analysez attentivement les deux descriptions et déterminez si elles décrivent la même fonctionnalité de manière équivalente.
+
+Ignorez les différences de style, de formulation ou de structure. Concentrez-vous uniquement sur le sens et la fonctionnalité décrite.
+
+Répondez UNIQUEMENT par "EQUIVALENT" ou "NON_EQUIVALENT", suivi d'une brève explication."""
+}
 
 def normalize_code_basic(code):
     """Normalisation basique du code"""
@@ -102,7 +120,6 @@ def normalize_code_advanced(code):
         return ""
     
     # Supprimer complètement les sections <think>...</think>
-    # Utilisation d'une regex plus robuste pour gérer les balises imbriquées
     think_pattern = r'<think>[\s\S]*?</think>'
     while re.search(think_pattern, code):
         code = re.sub(think_pattern, '', code)
@@ -211,7 +228,6 @@ def compare_ast_structures(code1, code2):
     except Exception:
         return False
 
-# Fonction pour détecter automatiquement le type de dataset
 def detect_dataset_type(source_path):
     """Détecte automatiquement le type de dataset basé sur le nom du fichier"""
     filename = os.path.basename(source_path).lower()
@@ -244,7 +260,6 @@ def detect_dataset_type(source_path):
         # Si on ne peut pas détecter, on utilise un format générique
         return "generic"
 
-# Fonctions de chargement de datasets
 def load_humaneval_dataset(source_path):
     """Charge un dataset HumanEval depuis sa source originale"""
     with open(source_path, 'r', encoding='utf-8') as f:
@@ -339,14 +354,19 @@ def load_code_x_glue_dataset(source_path):
     eval_data = []
     for i, item in enumerate(data):
         code = item.get('code', '')
-        nl = item.get('nl', '')  # Description en langage naturel
+        # Utiliser la docstring comme réponse attendue
+        docstring = item.get('docstring', '')
         
-        prompt = f"Décrivez ce que fait le code suivant en français :\n\n```\n{code}\n```"
+        # Nettoyer la docstring des marqueurs de commentaires
+        if docstring.startswith('//'):
+            docstring = docstring[2:].strip()
+        
+        prompt = f"Décrivez ce que fait le code suivant :\n\n```\n{code}\n```"
         
         eval_entry = {
             "question_id": i,
             "prompt": prompt,
-            "answer": nl
+            "answer": docstring
         }
         
         eval_data.append(eval_entry)
@@ -355,13 +375,11 @@ def load_code_x_glue_dataset(source_path):
 
 def load_dataset_from_source(source_path, dataset_type=None):
     """Charge un dataset depuis sa source originale"""
-    # Détection automatique du type si non spécifié
     if dataset_type is None:
         dataset_type = detect_dataset_type(source_path)
     
     print(f"Chargement du dataset de type: {dataset_type}")
     
-    # Chargement selon le type
     if dataset_type == "humaneval":
         return load_humaneval_dataset(source_path)
     elif dataset_type == "cruxeval":
@@ -372,62 +390,40 @@ def load_dataset_from_source(source_path, dataset_type=None):
         raise ValueError(f"Type de dataset non supporté: {dataset_type}")
 
 @weave.op()
-async def evaluate_code_final(answer: str, output: str, evaluator_model) -> dict:
-    """
-    Évalue la réponse du modèle avec une méthode complète qui combine:
-    1. Comparaison exacte après normalisation basique
-    2. Comparaison exacte après normalisation avancée
-    3. Comparaison exacte après normalisation extrême
-    4. Comparaison AST
-    5. Évaluation par IA
-    """
-    # Vérifier si le modèle a atteint sa limite
+async def evaluate_code_final(answer: str, output: str, evaluator_model, dataset_type: str = "code") -> dict:
+    """Évalue la réponse du modèle avec une méthode complète"""
     if output is None:
         return {'exact_match': False, 'reason': 'model_limit_reached'}
     
     # 1. Normalisation basique
-    norm_expected_basic = normalize_code_basic(answer)
-    norm_output_basic = normalize_code_basic(output)
-    
-    if norm_expected_basic == norm_output_basic:
+    if normalize_code_basic(answer) == normalize_code_basic(output):
         return {'exact_match': True, 'reason': 'basic_norm_match'}
     
     # 2. Normalisation avancée
-    norm_expected_advanced = normalize_code_advanced(answer)
-    norm_output_advanced = normalize_code_advanced(output)
-    
-    if norm_expected_advanced == norm_output_advanced:
+    if normalize_code_advanced(answer) == normalize_code_advanced(output):
         return {'exact_match': True, 'reason': 'advanced_norm_match'}
     
     # 3. Normalisation extrême
-    norm_expected_extreme = normalize_code_extreme(answer)
-    norm_output_extreme = normalize_code_extreme(output)
-    
-    if norm_expected_extreme == norm_output_extreme:
+    if normalize_code_extreme(answer) == normalize_code_extreme(output):
         return {'exact_match': True, 'reason': 'extreme_norm_match'}
     
     # 4. Comparaison AST
-    if compare_ast_structures(norm_expected_advanced, norm_output_advanced):
+    if compare_ast_structures(normalize_code_advanced(answer), normalize_code_advanced(output)):
         return {'exact_match': True, 'reason': 'ast_match'}
     
     # 5. Évaluation par IA
     try:
-        # Préparer le prompt pour l'évaluateur
-        prompt = AI_EVALUATOR_PROMPT.format(
-            expected=norm_expected_advanced,
-            actual=norm_output_advanced
+        prompt_type = "description" if dataset_type == "code_x_glue" else "code"
+        ai_prompt = AI_EVALUATOR_PROMPTS[prompt_type].format(
+            expected=answer, actual=output
         )
+        response = await evaluator_model.predict(ai_prompt)
         
-        # Utiliser le modèle pour l'évaluation
-        response = await evaluator_model.predict(prompt)
-        
-        # Analyser la réponse
         if "EQUIVALENT" in response and "NON_EQUIVALENT" not in response:
             return {'exact_match': True, 'reason': 'ai_equivalent'}
     except Exception as e:
         print(f"Erreur lors de l'évaluation par IA: {e}")
     
-    # Si toutes les méthodes échouent, la réponse est incorrecte
     return {'exact_match': False, 'reason': 'not_equivalent'}
 
 def run_benchmark(
@@ -437,43 +433,17 @@ def run_benchmark(
     num_responses: int = 1,
     entity: str = "laurentvv-none",
     project: str = "simple_bench",
-    temp: float = 0.7,
+    temp: float = 0.1,
     max_tokens: int = 2048,
     top_p: float = 0.95,
     max_retries: int = 3,
     custom_system_prompt: str = None,
 ):
     """
-    Exécute un benchmark d'évaluation sur un modèle et un dataset donnés,
-    avec une évaluation complète qui combine plusieurs méthodes.
-
-    Args:
-        model_name (str): Nom du modèle à utiliser pour l'inférence.
-            Par défaut "qwen3:14b".
-        dataset_source (str): Chemin vers le fichier source du dataset.
-            Par défaut "./sql-console-for-openai-openai-humaneval.json".
-        dataset_type (str): Type de dataset (humaneval, cruxeval, code_x_glue).
-            Par défaut None (détection automatique).
-        num_responses (int): Si supérieur à 1, le vote majoritaire sera appliqué.
-            Par défaut 1 (pas de vote majoritaire).
-        entity (str): Entité Weave optionnelle (nom d'org/utilisateur) pour le suivi de l'évaluation.
-        project (str): Nom du projet sous l'entité spécifiée.
-            Par défaut "simple_bench".
-        temp (float): Température pour le modèle.
-            Par défaut 0.7.
-        max_tokens (int): Nombre maximum de tokens à générer.
-            Par défaut 2048.
-        top_p (float): Top-p pour le modèle.
-            Par défaut 0.95.
-        max_retries (int): Nombre maximum de tentatives en cas d'erreur.
-            Par défaut 3.
-        custom_system_prompt (str): Prompt système personnalisé pour le modèle.
-            Par défaut None (utilise le prompt par défaut pour le type de dataset).
-
-    Exemple:
-        python run_benchmark_final.py --model_name=qwen3:14b --dataset_source=sql-console-for-openai-openai-humaneval.json
+    Exécute un benchmark d'évaluation sur un modèle et un dataset donnés.
     """
-    # Détecter automatiquement le type de dataset si non spécifié
+    start_time = time.time()
+    
     if dataset_type is None:
         dataset_type = detect_dataset_type(dataset_source)
     
@@ -482,17 +452,14 @@ def run_benchmark(
     else:
         weave.init(f"{project}")
     
-    # Charger le dataset
     dataset = load_dataset_from_source(dataset_source, dataset_type)
     
-    # Obtenir le prompt système approprié
     system_prompt = custom_system_prompt
     if system_prompt is None:
         system_prompt = SYSTEM_PROMPTS.get(dataset_type, "Vous êtes un assistant expert. Répondez de manière précise et concise.")
     
     print(f"Utilisation du prompt système pour le dataset de type {dataset_type}")
     
-    # Créer le modèle principal
     model = LiteLLMModel(
         model_name=model_name,
         temp=temp,
@@ -505,23 +472,19 @@ def run_benchmark(
     if num_responses > 1:
         model = MajorityVoteModel(model=model, num_responses=num_responses)
     
-    # Créer un modèle pour l'évaluation avec une température plus basse
     evaluator_model = LiteLLMModel(
         model_name=model_name,
-        temp=0.1,  # Température plus basse pour des réponses plus déterministes
+        temp=0.1,
         max_tokens=500,
         top_p=0.95,
         max_retries=max_retries,
-        system_prompt="Vous êtes un évaluateur expert en programmation Python."
+        system_prompt="Vous êtes un évaluateur expert en programmation."
     )
     
-    # Définir la fonction de scoring
     @weave.op()
     def score_function(answer: str, output: str) -> dict:
-        """Fonction de scoring qui utilise evaluate_code_final"""
-        return asyncio.run(evaluate_code_final(answer, output, evaluator_model))
+        return asyncio.run(evaluate_code_final(answer, output, evaluator_model, dataset_type))
     
-    # Créer l'évaluation
     evaluation = weave.Evaluation(
         dataset=dataset,
         scorers=[score_function],
@@ -531,49 +494,40 @@ def run_benchmark(
     print(f"Démarrage de l'évaluation avec le modèle {model_name}...")
     result = asyncio.run(evaluation.evaluate(model))
     
-    # Afficher les résultats
     print("\n=== Résultats de l'évaluation ===\n")
     print(result)
     
-    # Calculer et afficher les statistiques
-    total = 0
-    correct = 0
-    basic_norm_matches = 0
-    advanced_norm_matches = 0
-    extreme_norm_matches = 0
-    ast_matches = 0
-    ai_equivalents = 0
-    
-    # Récupérer les résultats
-    exact_match_counts = result.get('score_function', {}).get('exact_match', {}).get('counts', [])
-    reason_values = result.get('score_function', {}).get('reason', {}).get('values', [])
-    
-    total = len(exact_match_counts)
-    
-    for i, is_match in enumerate(exact_match_counts):
-        if is_match and i < len(reason_values):
-            correct += 1
-            reason = reason_values[i]
-            if reason == "basic_norm_match":
-                basic_norm_matches += 1
-            elif reason == "advanced_norm_match":
-                advanced_norm_matches += 1
-            elif reason == "extreme_norm_match":
-                extreme_norm_matches += 1
-            elif reason == "ast_match":
-                ast_matches += 1
-            elif reason == "ai_equivalent":
-                ai_equivalents += 1
-    
-    if total > 0:
-        print(f"\nRésultat final: {correct}/{total} correct ({correct/total*100:.2f}%)")
-        print(f"  - Normalisation basique: {basic_norm_matches}/{total} ({basic_norm_matches/total*100:.2f}%)")
-        print(f"  - Normalisation avancée: {advanced_norm_matches}/{total} ({advanced_norm_matches/total*100:.2f}%)")
-        print(f"  - Normalisation extrême: {extreme_norm_matches}/{total} ({extreme_norm_matches/total*100:.2f}%)")
-        print(f"  - Comparaison AST: {ast_matches}/{total} ({ast_matches/total*100:.2f}%)")
-        print(f"  - Équivalences IA: {ai_equivalents}/{total} ({ai_equivalents/total*100:.2f}%)")
-    else:
-        print("\nAucune question évaluée.")
+    try:
+        score_data = result.get('score_function', {}) if result else {}
+        exact_match_data = score_data.get('exact_match', {}) if score_data else {}
+        
+        total = exact_match_data.get('true_count', 0) + exact_match_data.get('false_count', 0)
+        correct = exact_match_data.get('true_count', 0)
+        elapsed = time.time() - start_time
+        
+        if total > 0:
+            print(f"\nRésultat final: {correct}/{total} correct ({correct/total*100:.2f}%)")
+            print(f"Temps d'exécution: {elapsed:.1f}s")
+            
+            try:
+                import winsound
+                for _ in range(3):
+                    winsound.Beep(1000, 500)
+            except (ImportError, Exception):
+                # Fallback avec beep système
+                for _ in range(5):
+                    print("\a", end="", flush=True)
+                print("\n🔔 Benchmark terminé !")
+                # Alternative avec os.system
+                try:
+                    import os
+                    os.system('echo \a')
+                except:
+                    pass
+        else:
+            print("\nAucune question évaluée.")
+    except Exception as e:
+        print(f"Erreur lors du calcul des statistiques: {e}")
 
 if __name__ == "__main__":
     Fire(run_benchmark)

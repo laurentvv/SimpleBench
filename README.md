@@ -1,14 +1,20 @@
-# SimpleBench
+# Bench AI with Ollama/LMStudio
 
 <div align="center">
 
-![SimpleBench Logo](https://img.shields.io/badge/SimpleBench-Benchmark%20for%20LLMs-blue)
+![Bench AI Logo](https://img.shields.io/badge/Bench%20AI-LLM%20Benchmark%20Tool-blue)
 [![Python 3.13+](https://img.shields.io/badge/python-3.13+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 </div>
 
-SimpleBench est un outil léger et efficace pour évaluer les performances des modèles de langage (LLMs) exécutés via [Ollama](https://ollama.com/). Il permet aux chercheurs et développeurs de comparer objectivement différents modèles sur des tâches standardisées de programmation et de raisonnement.
+Bench AI est un outil léger et efficace pour évaluer les performances des modèles de langage (LLMs) exécutés via [Ollama](https://ollama.com/) et LMStudio. Il permet aux chercheurs et développeurs de comparer objectivement différents modèles sur des tâches standardisées de programmation et de raisonnement.
+
+## 🎯 Résultats Récents
+
+- **Précision d'évaluation** : 63% de réponses correctes détectées sur HumanEval
+- **Méthodes d'évaluation** : 5 approches complémentaires (normalisation, AST, IA)
+- **Reproductibilité** : Résultats cohérents entre les exécutions
 
 ## ✨ Caractéristiques
 
@@ -27,8 +33,8 @@ SimpleBench est un outil léger et efficace pour évaluer les performances des m
 
 1. Clonez le dépôt :
    ```bash
-   git clone https://github.com/simple-bench/simple-bench.git
-   cd simple-bench
+   git clone https://github.com/laurentvv/bench-ai-ollama-lmstudio.git
+   cd bench-ai-ollama-lmstudio
    ```
 
 2. Créez un environnement virtuel et installez les dépendances :
@@ -50,18 +56,18 @@ SimpleBench est un outil léger et efficace pour évaluer les performances des m
 3. Exécutez le benchmark avec un dataset au choix :
    ```bash
    # Pour HumanEval
-   python run_benchmark_final.py --model_name=qwen3:14b --dataset_source=sql-console-for-openai-openai-humaneval.json
+   python run_benchmark_production.py --model_name=qwen3:14b --dataset_source=sql-console-for-openai-openai-humaneval.json
    
    # Pour CruxEval
-   python run_benchmark_final.py --model_name=qwen3:14b --dataset_source=sql-console-for-cruxeval-org-cruxeval.json
+   python run_benchmark_production.py --model_name=qwen3:14b --dataset_source=sql-console-for-cruxeval-org-cruxeval.json
    
    # Pour Code-X-GLUE
-   python run_benchmark_final.py --model_name=qwen3:14b --dataset_source=sql-console-for-google-code-x-glue-ct-code-to-text.json
+   python run_benchmark_production.py --model_name=qwen3:14b --dataset_source=sql-console-for-google-code-x-glue-ct-code-to-text.json
    ```
 
 ## ιχ Suivi avec Weave
 
-SimpleBench est intégré avec [Weave](https://wandb.ai/site/weave), un outil puissant pour le suivi et la visualisation de vos expériences.
+Bench AI est intégré avec [Weave](https://wandb.ai/site/weave), un outil puissant pour le suivi et la visualisation de vos expériences.
 
 ### Configuration de Weave
 
@@ -74,7 +80,7 @@ SimpleBench est intégré avec [Weave](https://wandb.ai/site/weave), un outil pu
 Pour activer le suivi avec Weave, utilisez les options `--entity` et `--project` lors de l'exécution du benchmark :
 
 ```bash
-python run_benchmark_final.py \
+python run_benchmark_production.py \
   --model_name=qwen3:14b \
   --dataset_source=sql-console-for-openai-openai-humaneval.json \
   --entity="votre-entite-weave" \
@@ -98,7 +104,7 @@ Les résultats de l'évaluation, y compris les scores détaillés et les prédic
 | `--dataset_source` | Chemin vers le fichier source du dataset | ./sql-console-for-openai-openai-humaneval.json |
 | `--dataset_type` | Type de dataset (humaneval, cruxeval, code_x_glue) | auto-détecté |
 | `--num_responses` | Nombre de réponses pour le vote majoritaire | 1 |
-| `--temp` | Température pour le modèle | 0.7 |
+| `--temp` | Température pour le modèle | 0.1 |
 | `--max_tokens` | Nombre maximum de tokens à générer | 2048 |
 | `--top_p` | Valeur top_p pour le modèle | 0.95 |
 | `--max_retries` | Nombre maximum de tentatives en cas d'erreur | 3 |
@@ -106,22 +112,23 @@ Les résultats de l'évaluation, y compris les scores détaillés et les prédic
 
 ## 📊 Analyse des résultats
 
-Le script `run_benchmark_final.py` affiche automatiquement les résultats détaillés de l'évaluation, notamment :
+Le script `run_benchmark_production.py` affiche automatiquement les résultats détaillés de l'évaluation, notamment :
 
 - Le nombre total de questions évaluées
 - Le nombre et pourcentage de réponses correctes
+- Le temps d'exécution total
 - La répartition des réponses correctes par méthode d'évaluation :
-  - Normalisation basique (correspondance exacte après nettoyage)
-  - Normalisation avancée (gestion de l'indentation)
-  - Normalisation extrême (suppression des espaces et sauts de ligne)
-  - Comparaison AST (analyse de la structure syntaxique)
-  - Équivalence IA (détection d'équivalence fonctionnelle)
+  - **Normalisation basique** : Correspondance exacte après nettoyage
+  - **Normalisation avancée** : Gestion intelligente de l'indentation
+  - **Normalisation extrême** : Suppression des espaces et sauts de ligne
+  - **Comparaison AST** : Analyse de la structure syntaxique
+  - **Équivalence IA** : Détection d'équivalence fonctionnelle
 
 Ces statistiques détaillées vous permettent de comprendre précisément les performances du modèle et les types de réponses qu'il génère.
 
 ## 🧩 Datasets supportés
 
-SimpleBench supporte nativement plusieurs datasets populaires pour l'évaluation des modèles de langage :
+Bench AI supporte nativement plusieurs datasets populaires pour l'évaluation des modèles de langage :
 
 ### HumanEval
 
@@ -137,11 +144,11 @@ SimpleBench supporte nativement plusieurs datasets populaires pour l'évaluation
 
 ## 🔧 Détection automatique des datasets
 
-SimpleBench détecte automatiquement le type de dataset en fonction du nom du fichier ou de son contenu. Vous pouvez également spécifier explicitement le type avec l'option `--dataset_type`.
+Bench AI détecte automatiquement le type de dataset en fonction du nom du fichier ou de son contenu. Vous pouvez également spécifier explicitement le type avec l'option `--dataset_type`.
 
 ## 💯 Évaluation avancée
 
-SimpleBench utilise une approche d'évaluation avancée qui combine plusieurs méthodes pour détecter les réponses correctes :
+Bench AI utilise une approche d'évaluation avancée qui combine plusieurs méthodes pour détecter les réponses correctes :
 
 1. **Normalisation basique** : Supprime les balises et normalise les espaces
 2. **Normalisation avancée** : Gère intelligemment l'indentation et les sauts de ligne
@@ -150,6 +157,13 @@ SimpleBench utilise une approche d'évaluation avancée qui combine plusieurs m�
 5. **Évaluation par IA** : Utilise un modèle de langage pour détecter les équivalences fonctionnelles
 
 Cette approche permet de détecter beaucoup plus précisément les réponses correctes, même lorsqu'elles diffèrent de la solution attendue en termes de style, de noms de variables ou d'approche algorithmique.
+
+## 🚀 Prochaines Fonctionnalités
+
+- Support de LMStudio pour les modèles locaux
+- Dataset MBPP (Mostly Basic Python Problems)
+- Interface web pour visualiser les résultats
+- Comparaison automatique entre modèles
 
 ## 🤝 Contribution
 

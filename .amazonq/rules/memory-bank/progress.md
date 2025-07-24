@@ -4,41 +4,37 @@
 - ✅ Chargement direct des datasets originaux (HumanEval, CruxEval, Code-X-GLUE)
 - ✅ Détection automatique du type de dataset
 - ✅ Intégration avec Ollama via LiteLLM
-- ✅ Évaluation des réponses adaptée au type de dataset
+- ✅ Évaluation multi-méthodes (5 approches complémentaires)
 - ✅ Support de différents modèles Ollama
-- ✅ Évaluation avancée qui tolère les différences de style et d'implémentation
-- ✅ Détection des limites du modèle (max tokens)
-- ✅ Scripts d'analyse des résultats (statistiques et vérification)
-- ✅ Détection automatique des nouveaux modèles Ollama
-- ✅ Support de différents formats de réponse (think/markdown/texte)
-- ✅ Prompts système spécifiques intégrés pour chaque type de dataset
-- ✅ Évaluation par IA pour détecter les équivalences fonctionnelles
-- ✅ Analyse AST pour détecter les équivalences structurelles
-- ✅ Normalisation avancée pour gérer les différences d'indentation
+- ✅ Précision d'évaluation de 63% sur HumanEval
+- ✅ Intégration Weave pour le suivi des expériences
+- ✅ Prompts système optimisés par type de dataset
+- ✅ Gestion robuste des erreurs et exceptions
+- ✅ Version production stabilisée
+- ✅ Documentation complète et README mis à jour
+- ✅ Nettoyage du code pour publication
 
 ## Problèmes Résolus
-- ✅ Simplification du workflow d'évaluation (un seul script)
-- ✅ Élimination des étapes de conversion intermédiaires
-- ✅ Problème de comparaison des réponses avec différents formats
-- ✅ Extraction correcte des réponses du modèle
-- ✅ Simplification de la logique d'évaluation pour plus de robustesse
-- ✅ Traitement spécial pour les questions problématiques
-- ✅ Gestion des différents formats de réponse selon le modèle
-- ✅ Identification des cas où le modèle atteint sa limite de tokens
-- ✅ Évaluation trop stricte qui rejetait des réponses correctes
-- ✅ Problèmes d'indentation dans les réponses des modèles
-- ✅ Détection incomplète des balises <think>
-- ✅ Faux négatifs dans l'évaluation des réponses
+- ✅ Inconsistance des résultats entre exécutions
+- ✅ Problèmes d'encodage Unicode sur Windows
+- ✅ Crashes liés aux emojis dans les logs
+- ✅ Évaluation trop stricte (passage de 0% à 63%)
+- ✅ Complexité excessive du code
+- ✅ Fichiers temporaires et expérimentaux
+- ✅ Documentation obsolète
+- ✅ Gestion d'erreur fragile
+- ✅ Performance sous-optimale
 
 ## En Cours
-- 🔄 Tests avec différents modèles Ollama
-- 🔄 Optimisation des performances du benchmark
+- 🔄 Implémentation du dataset MBPP
+- 🔄 Développement du support LMStudio
 
 ## À Faire
-- ⏳ Interface utilisateur pour visualiser les résultats
-- ⏳ Comparaison automatique entre différents modèles
-- ⏳ Documentation plus détaillée
-- ⏳ Parallélisation des évaluations pour améliorer les performances
+- ⏳ Dataset MBPP (Mostly Basic Python Problems)
+- ⏳ Support LMStudio pour modèles locaux
+- ⏳ Interface web de visualisation
+- ⏳ Publication sur GitHub
+- ⏳ Comparaison multi-modèles automatique
 
 ## Décisions Techniques
 - Utilisation de Weave pour le suivi des résultats
