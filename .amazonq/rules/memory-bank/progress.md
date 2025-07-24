@@ -35,7 +35,6 @@
 - 🔄 Optimisation des performances du benchmark
 
 ## À Faire
-- ⏳ Support de datasets additionnels
 - ⏳ Interface utilisateur pour visualiser les résultats
 - ⏳ Comparaison automatique entre différents modèles
 - ⏳ Documentation plus détaillée

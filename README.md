@@ -59,6 +59,37 @@ SimpleBench est un outil léger et efficace pour évaluer les performances des m
    python run_benchmark_final.py --model_name=qwen3:14b --dataset_source=sql-console-for-google-code-x-glue-ct-code-to-text.json
    ```
 
+## ιχ Suivi avec Weave
+
+SimpleBench est intégré avec [Weave](https://wandb.ai/site/weave), un outil puissant pour le suivi et la visualisation de vos expériences.
+
+### Configuration de Weave
+
+1. **Créez un compte Weave** : Rendez-vous sur le [site de Weave](https://wandb.ai/site/weave) et créez un compte gratuit.
+
+2. **Connectez-vous à Weave** : Une fois votre compte créé, vous pouvez vous connecter via le CLI (non nécessaire pour ce projet, géré par l'API).
+
+### Utilisation de Weave avec SimpleBench
+
+Pour activer le suivi avec Weave, utilisez les options `--entity` et `--project` lors de l'exécution du benchmark :
+
+```bash
+python run_benchmark_final.py \
+  --model_name=qwen3:14b \
+  --dataset_source=sql-console-for-openai-openai-humaneval.json \
+  --entity="votre-entite-weave" \
+  --project="nom-du-projet"
+```
+
+- `--entity` : Votre nom d'utilisateur ou d'organisation Weave.
+- `--project` : Le nom du projet sous lequel vous souhaitez enregistrer l'expérience.
+
+Les résultats de l'évaluation, y compris les scores détaillés et les prédictions du modèle, seront automatiquement envoyés à votre projet Weave, vous permettant de :
+
+- Comparer les performances de différents modèles
+- Analyser les erreurs de prédiction
+- Partager vos résultats avec votre équipe
+
 ### Options disponibles
 
 | Option | Description | Valeur par défaut |

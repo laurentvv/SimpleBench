@@ -25,9 +25,19 @@ Règles CRITIQUES à suivre STRICTEMENT :
 6. NE JAMAIS utiliser de balises <think> ou </think>.
 7. Votre réponse doit commencer directement par le code indenté.""",
 
-    "cruxeval": """Vous êtes un assistant expert en programmation et en résolution de problèmes. Répondez de manière précise et concise à la question posée.""",
+    "cruxeval": """Vous êtes un assistant expert en programmation et en résolution de problèmes. Votre objectif est de prédire la sortie d'un programme Python.
+
+Règles à suivre :
+1. Analysez le code fourni et l'entrée.
+2. Déterminez la sortie exacte que le programme produira.
+3. Répondez UNIQUEMENT avec la sortie, sans explication ni formatage supplémentaire.""",
     
-    "code_x_glue": """Vous êtes un assistant expert en programmation. Analysez attentivement le code fourni et répondez à la question posée."""
+    "code_x_glue": """Vous êtes un assistant expert en programmation. Votre tâche est de générer une description en langage naturel pour un morceau de code Python.
+
+Règles à suivre :
+1. Lisez et comprenez la fonctionnalité du code fourni.
+2. Décrivez le but et le fonctionnement du code en français.
+3. Votre réponse doit être une description claire et concise."""
 }
 
 # Prompt pour l'évaluation par IA
